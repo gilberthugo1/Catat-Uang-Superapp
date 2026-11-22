@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>CatatUang - Catatan Keuangan Mudah</title>
+  <title>Catat Uang - Catatan Keuangan Mudah</title>
 
   <!-- Pengaturan PWA -->
   <link rel="manifest" href="manifest.json" />
@@ -89,10 +89,10 @@
       <h3 class="font-extrabold text-slate-800 text-base mb-2 flex items-center gap-2">
         <span>🎙️</span> Catat Cepat (Suara / Ketik)
       </h3>
-      <div class="flex gap-2">
-        <input id="smartInput" type="text" placeholder="Contoh: Beli beras 50 ribu" class="flex-1 border-2 border-slate-300 focus:border-emerald-600 rounded-xl px-3 py-2.5 text-base outline-none" />
-        <button onclick="startVoice()" id="btnMic" title="Rekam Suara" class="bg-amber-500 hover:bg-amber-600 text-white px-3.5 rounded-xl font-bold text-xl btn-press">🎙️</button>
-        <button onclick="prosesSmartInput()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 rounded-xl font-bold text-sm btn-press">Catat</button>
+     <div class="flex gap-2 w-full">
+        <input id="smartInput" type="text" placeholder="Beli beras 50 ribu" class="flex-1 min-w-0 border-2 border-slate-300 focus:border-emerald-600 rounded-xl px-3 py-2.5 text-sm outline-none" />
+        <button onclick="startVoice()" id="btnMic" title="Rekam Suara" class="shrink-0 bg-amber-500 hover:bg-amber-600 text-white px-3 rounded-xl font-bold text-lg btn-press">🎙️</button>
+        <button onclick="prosesSmartInput()" class="shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 rounded-xl font-bold text-sm btn-press">Catat</button>
       </div>
       <div class="flex gap-1.5 mt-2.5 overflow-x-auto no-scrollbar pb-1">
         <button onclick="isiContoh('Beli beras 65 ribu')" class="shrink-0 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-2.5 py-1.5 rounded-lg border border-slate-200">"Beli beras 65 ribu"</button>
