@@ -63,7 +63,7 @@
       <div class="mt-4 pt-4 border-t border-slate-100">
         <div class="flex justify-between items-center text-sm mb-1.5">
           <span class="font-bold text-slate-700">Batas Belanja Bulan Ini</span>
-          <button onclick="ubahBatasBelanja()" class="text-emerald-700 font-bold underline text-xs">Ubah Batas</button>
+          <button onclick="ubahBatasBelanja()" class="text-emerald-700 font-bold underline text-xs">Atur Batas</button>
         </div>
         <div class="w-full bg-slate-200 rounded-full h-3.5 overflow-hidden">
           <div id="budgetBar" class="bg-emerald-600 h-3.5 rounded-full transition-all duration-300" style="width: 0%"></div>
@@ -96,8 +96,8 @@
       </div>
       <div class="flex gap-1.5 mt-2.5 overflow-x-auto no-scrollbar pb-1">
         <button onclick="isiContoh('Beli beras 65 ribu')" class="shrink-0 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-2.5 py-1.5 rounded-lg border border-slate-200">"Beli beras 65 ribu"</button>
-        <button onclick="isiContoh('Isi bensin 50rb pakai GoPay')" class="shrink-0 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-2.5 py-1.5 rounded-lg border border-slate-200">"Bensin 50rb GoPay"</button>
-        <button onclick="isiContoh('Gaji bulanan 6,5 juta ke BCA')" class="shrink-0 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-2.5 py-1.5 rounded-lg border border-slate-200">"Gaji 6,5 juta BCA"</button>
+        <button onclick="isiContoh('Isi bensin 50rb pakai E-Wallet')" class="shrink-0 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-2.5 py-1.5 rounded-lg border border-slate-200">"Bensin 50rb E-Wallet"</button>
+        <button onclick="isiContoh('Gaji bulanan 5 juta ke Bank')" class="shrink-0 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-2.5 py-1.5 rounded-lg border border-slate-200">"Gaji 5 juta Bank"</button>
       </div>
     </section>
 
@@ -151,7 +151,7 @@
   <!-- ================= TAB 2: DOMPET & ASET ================= -->
   <main id="tab-dompet" class="p-4 space-y-5 hidden">
     <section class="bg-emerald-700 text-white rounded-2xl p-5 shadow-md">
-      <p class="text-sm text-emerald-100 font-semibold">Total Seluruh Aset Bulan Ini</p>
+      <p class="text-sm text-emerald-100 font-semibold">Total Seluruh Aset Saat Ini</p>
       <h2 id="asetTotalDisplay" class="text-3xl font-extrabold mt-1">Rp 0</h2>
       <div class="flex gap-2 mt-4">
         <button onclick="openTransferModal()" class="flex-1 bg-white text-emerald-800 font-extrabold py-2.5 rounded-xl text-sm shadow btn-press">🔄 Pindah Uang</button>
@@ -161,19 +161,25 @@
 
     <!-- Daftar Dompet / Sumber Uang -->
     <section>
-      <h3 class="font-extrabold text-slate-800 text-base mb-2.5">💼 Daftar Sumber Keuangan</h3>
+      <div class="flex justify-between items-center mb-2.5">
+        <h3 class="font-extrabold text-slate-800 text-base">💼 Daftar Sumber Keuangan</h3>
+        <span class="text-xs text-slate-500 font-semibold">Klik "Ubah Saldo" untuk isi awal</span>
+      </div>
       <div id="walletList" class="space-y-2.5"></div>
     </section>
 
     <!-- Grafik Pembagian Aset -->
     <section class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
       <h3 class="font-extrabold text-slate-800 text-base mb-3">🍩 Pembagian Aset Saya</h3>
-      <div class="h-56 flex items-center justify-center">
+      <div id="donutEmpty" class="text-center py-8 text-sm text-slate-500 font-semibold hidden">
+        Belum ada saldo aset. Silakan isi saldo awal di daftar sumber keuangan di atas.
+      </div>
+      <div id="donutWrap" class="h-56 flex items-center justify-center">
         <canvas id="assetDonutChart"></canvas>
       </div>
     </section>
 
-    <!-- Fitur Cadangkan & Pulihkan Data (Pengaman Data Lokal) -->
+    <!-- Fitur Cadangkan & Pulihkan Data -->
     <section class="bg-amber-50 rounded-2xl p-4 border-2 border-amber-200 space-y-3">
       <div>
         <h3 class="font-extrabold text-amber-900 text-base flex items-center gap-2">💾 Cadangkan & Pulihkan Data</h3>
@@ -186,6 +192,9 @@
           <input type="file" id="importFile" accept=".json" onchange="importData(event)" class="hidden" />
         </label>
       </div>
+      <button onclick="resetAllData()" class="w-full text-rose-700 hover:bg-rose-50 border border-rose-300 font-bold py-2.5 rounded-xl text-xs btn-press">
+        🗑️ Hapus Semua Catatan (Mulai dari Rp 0)
+      </button>
     </section>
   </main>
 
@@ -197,7 +206,7 @@
         <h3 class="font-extrabold text-slate-800 text-base">📈 Grafik 6 Bulan</h3>
         <div class="flex bg-slate-100 p-1 rounded-xl text-xs font-bold">
           <button id="btnChartBar" onclick="setChartMode('bar')" class="px-2.5 py-1 rounded-lg bg-emerald-600 text-white">Masuk/Keluar</button>
-          <button id="btnChartLine" onclick="setChartMode('line')" class="px-2.5 py-1 rounded-lg text-slate-600">Tren Aset</button>
+          <button id="btnChartLine" onclick="setChartMode('line')" class="px-2.5 py-1 rounded-lg text-slate-600">Tren Bersih</button>
         </div>
       </div>
       <div class="h-56">
@@ -325,10 +334,22 @@
   </div>
 
   <script>
-    const STORAGE_KEY = 'catatuang_superapp_v1';
-    const MONTHS = ['2026-06', '2026-07', '2026-08', '2026-09', '2026-10', '2026-11'];
-    const MONTH_NAMES = { '2026-06':'Jun 2026', '2026-07':'Jul 2026', '2026-08':'Agu 2026', '2026-09':'Sep 2026', '2026-10':'Okt 2026', '2026-11':'Nov 2026' };
-    const CURRENT_MONTH = '2026-11';
+    const STORAGE_KEY = 'catatuang_superapp_v2';
+
+    // Otomatis buat daftar 6 bulan terakhir sesuai tanggal hari ini
+    const NAMA_BULAN_ID = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+    const MONTHS = [];
+    const MONTH_NAMES = {};
+    (function initMonths() {
+      const now = new Date();
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        MONTHS.push(key);
+        MONTH_NAMES[key] = `${NAMA_BULAN_ID[d.getMonth()]} ${d.getFullYear()}`;
+      }
+    })();
+    const CURRENT_MONTH = MONTHS[MONTHS.length - 1];
 
     const CATS_KELUAR = [
       { name:'Makan', icon:'🍽️' }, { name:'Belanja Pasar', icon:'🛒' }, { name:'Bensin', icon:'⛽' },
@@ -340,36 +361,22 @@
       { name:'Hasil Tabungan', icon:'📈' }, { name:'Lainnya', icon:'💰' }
     ];
 
-    // Data Awal Default (6 Bulan Realistis)
-    const DEFAULT_DATA = {
-      budget: 3500000,
-      largeMode: false,
-      wallets: [
-        { id:'w1', name:'Dompet Tunai', icon:'💵', balance: 850000 },
-        { id:'w2', name:'Bank BCA', icon:'🏦', balance: 6450000 },
-        { id:'w3', name:'Bank BRI', icon:'🏛️', balance: 2300000 },
-        { id:'w4', name:'GoPay', icon:'📱', balance: 420000 },
-        { id:'w5', name:'Tabungan Emas', icon:'🥇', balance: 4500000 }
-      ],
-      transactions: [
-        { id:1, type:'masuk', amount:6500000, category:'Gaji', icon:'💵', note:'Gaji bulanan', walletId:'w2', month:'2026-11', date:'2026-11-01' },
-        { id:2, type:'keluar', amount:450000, category:'Tagihan', icon:'💡', note:'Listrik & Air', walletId:'w2', month:'2026-11', date:'2026-11-05' },
-        { id:3, type:'keluar', amount:320000, category:'Belanja Pasar', icon:'🛒', note:'Beras & lauk mingguan', walletId:'w1', month:'2026-11', date:'2026-11-12' },
-        { id:4, type:'keluar', amount:85000, category:'Makan', icon:'🍽️', note:'Makan siang keluarga', walletId:'w4', month:'2026-11', date:'2026-11-18' },
-        { id:5, type:'masuk', amount:6200000, category:'Gaji', icon:'💵', note:'Gaji Okt', walletId:'w2', month:'2026-10', date:'2026-10-01' },
-        { id:6, type:'keluar', amount:2900000, category:'Belanja Pasar', icon:'🛒', note:'Kebutuhan rumah', walletId:'w1', month:'2026-10', date:'2026-10-15' },
-        { id:7, type:'masuk', amount:6000000, category:'Gaji', icon:'💵', note:'Gaji Sep', walletId:'w2', month:'2026-09', date:'2026-09-01' },
-        { id:8, type:'keluar', amount:3100000, category:'Tagihan', icon:'💡', note:'Tagihan & belanja', walletId:'w2', month:'2026-09', date:'2026-09-14' },
-        { id:9, type:'masuk', amount:6100000, category:'Gaji', icon:'💵', note:'Gaji Agu', walletId:'w2', month:'2026-08', date:'2026-08-01' },
-        { id:10, type:'keluar', amount:2700000, category:'Makan', icon:'🍽️', note:'Pengeluaran Agu', walletId:'w1', month:'2026-08', date:'2026-08-20' },
-        { id:11, type:'masuk', amount:5800000, category:'Gaji', icon:'💵', note:'Gaji Jul', walletId:'w2', month:'2026-07', date:'2026-07-01' },
-        { id:12, type:'keluar', amount:3400000, category:'Keluarga', icon:'👨‍👩‍👧', note:'Keperluan sekolah', walletId:'w2', month:'2026-07', date:'2026-07-10' },
-        { id:13, type:'masuk', amount:5900000, category:'Gaji', icon:'💵', note:'Gaji Jun', walletId:'w2', month:'2026-06', date:'2026-06-01' },
-        { id:14, type:'keluar', amount:2500000, category:'Belanja Pasar', icon:'🛒', note:'Belanja bulanan', walletId:'w1', month:'2026-06', date:'2026-06-18' }
-      ]
-    };
+    // Kondisi Default Bersih (Semua Rp 0 & Kosong)
+    function createFreshData() {
+      return {
+        budget: 0,
+        largeMode: false,
+        wallets: [
+          { id:'w1', name:'Dompet Tunai', icon:'💵', balance: 0 },
+          { id:'w2', name:'Rekening Bank', icon:'🏦', balance: 0 },
+          { id:'w3', name:'E-Wallet / QRIS', icon:'📱', balance: 0 },
+          { id:'w4', name:'Tabungan / Aset', icon:'🥇', balance: 0 }
+        ],
+        transactions: []
+      };
+    }
 
-    let state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || DEFAULT_DATA;
+    let state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || createFreshData();
     let modalType = 'keluar';
     let selectedCat = CATS_KELUAR[0];
     let selectedReportMonth = CURRENT_MONTH;
@@ -385,7 +392,8 @@
     }
 
     function rp(n) {
-      return 'Rp ' + Math.round(n).toLocaleString('id-ID');
+      const sign = n < 0 ? '-' : '';
+      return sign + 'Rp ' + Math.round(Math.abs(n)).toLocaleString('id-ID');
     }
 
     function toggleFontSize() {
@@ -489,7 +497,6 @@
       if (!raw) return;
       const lower = raw.toLowerCase();
 
-      // Deteksi nominal (juta, ribu/rb, angka biasa)
       let amount = 0;
       const match = lower.match(/(\d+(?:[.,]\d+)?)\s*(juta|jt|ribu|rb)?/);
       if (match) {
@@ -507,13 +514,12 @@
       const isMasuk = /(gaji|terima|masuk|dapat|bonus|jual)/.test(lower);
       const type = isMasuk ? 'masuk' : 'keluar';
 
-      // Deteksi dompet
       let wallet = state.wallets[0];
       for (const w of state.wallets) {
-        if (lower.includes(w.name.toLowerCase().replace('bank ', ''))) { wallet = w; break; }
+        const keywords = w.name.toLowerCase().split(/[\s\/]+/);
+        if (keywords.some(k => k.length > 2 && lower.includes(k))) { wallet = w; break; }
       }
 
-      // Deteksi kategori
       let cat = isMasuk ? { name:'Gaji', icon:'💵' } : { name:'Lainnya', icon:'📦' };
       if (/makan|nasi|bakso|soto|kopi/.test(lower)) cat = { name:'Makan', icon:'🍽️' };
       else if (/bensin|pertalite|pertamax|parkir/.test(lower)) cat = { name:'Bensin', icon:'⛽' };
@@ -584,29 +590,35 @@
 
     // ---- DOMPET & TRANSFER ----
     function ubahBatasBelanja() {
-      const val = prompt('Masukkan Batas Belanja Bulan Ini (Rp):', state.budget);
-      if (val && !isNaN(parseInt(val))) { state.budget = parseInt(val); saveState(); }
+      const val = prompt('Masukkan Batas Belanja Bulan Ini (Rp):', state.budget || '');
+      if (val !== null && !isNaN(parseInt(val))) { state.budget = Math.max(0, parseInt(val)); saveState(); }
     }
 
     function tambahSumberModal() {
-      const name = prompt('Nama sumber keuangan baru (misal: Bank Mandiri, OVO):');
+      const name = prompt('Nama sumber keuangan baru (misal: Bank BCA, GoPay, Emas):');
       if (!name) return;
       const bal = parseInt(prompt('Saldo saat ini (Rp):', '0')) || 0;
       state.wallets.push({ id: 'w' + Date.now(), name, icon: '💳', balance: bal });
       saveState();
+      renderDonutChart();
     }
 
     function ubahSaldoWallet(id) {
       const w = state.wallets.find(x => x.id === id);
-      const val = prompt(`Ubah saldo ${w.name} saat ini (Rp):`, w.balance);
-      if (val !== null && !isNaN(parseInt(val))) { w.balance = parseInt(val); saveState(); }
+      const val = prompt(`Masukkan saldo ${w.name} saat ini (Rp):`, w.balance);
+      if (val !== null && !isNaN(parseInt(val))) {
+        w.balance = parseInt(val);
+        saveState();
+        renderDonutChart();
+      }
     }
 
     function openTransferModal() {
+      if (state.wallets.length < 2) { alert('Minimal harus ada 2 sumber keuangan.'); return; }
       const opts = state.wallets.map(w => `<option value="${w.id}">${w.icon} ${w.name} (${rp(w.balance)})</option>`).join('');
       document.getElementById('tfFrom').innerHTML = opts;
       document.getElementById('tfTo').innerHTML = opts;
-      if (state.wallets.length > 1) document.getElementById('tfTo').selectedIndex = 1;
+      document.getElementById('tfTo').selectedIndex = 1;
       document.getElementById('tfAmount').value = '';
       const m = document.getElementById('transferModal');
       m.classList.remove('hidden'); m.classList.add('flex');
@@ -623,11 +635,12 @@
       wFrom.balance -= amt;
       wTo.balance += amt;
       saveState();
+      renderDonutChart();
       document.getElementById('transferModal').classList.add('hidden');
       showToast(`Berhasil pindah ${rp(amt)} ke ${wTo.name}`, false);
     }
 
-    // ---- CADANGKAN & PULIHKAN DATA (EXPORT / IMPORT) ----
+    // ---- CADANGKAN, PULIHKAN, & RESET DATA ----
     function exportData() {
       const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
@@ -649,6 +662,7 @@
           if (parsed.wallets && parsed.transactions) {
             state = parsed;
             saveState();
+            renderDonutChart();
             showToast('Data berhasil dipulihkan!', false);
           } else {
             alert('File cadangan tidak valid.');
@@ -658,6 +672,15 @@
         }
       };
       reader.readAsText(file);
+    }
+
+    function resetAllData() {
+      if (confirm('Yakin ingin menghapus semua catatan dan mengembalikan saldo ke Rp 0?')) {
+        state = createFreshData();
+        saveState();
+        renderDonutChart();
+        showToast('Semua data berhasil direset ke Rp 0.', false);
+      }
     }
 
     // ---- RENDER UI ----
@@ -672,14 +695,24 @@
       document.getElementById('homeMasuk').textContent = rp(masukNow);
       document.getElementById('homeKeluar').textContent = rp(keluarNow);
 
-      const pct = Math.min(100, Math.round((keluarNow / (state.budget || 1)) * 100));
       const bar = document.getElementById('budgetBar');
-      bar.style.width = pct + '%';
-      bar.className = `h-3.5 rounded-full transition-all duration-300 ${pct >= 90 ? 'bg-rose-600' : pct >= 70 ? 'bg-amber-500' : 'bg-emerald-600'}`;
-      document.getElementById('budgetText').textContent = `Terpakai ${pct}% (${rp(keluarNow)} dari ${rp(state.budget)})`;
+      if (state.budget > 0) {
+        const pct = Math.min(100, Math.round((keluarNow / state.budget) * 100));
+        bar.style.width = pct + '%';
+        bar.className = `h-3.5 rounded-full transition-all duration-300 ${pct >= 90 ? 'bg-rose-600' : pct >= 70 ? 'bg-amber-500' : 'bg-emerald-600'}`;
+        document.getElementById('budgetText').textContent = `Terpakai ${pct}% (${rp(keluarNow)} dari ${rp(state.budget)})`;
+      } else {
+        bar.style.width = '0%';
+        bar.className = 'bg-emerald-600 h-3.5 rounded-full transition-all duration-300';
+        document.getElementById('budgetText').textContent = 'Batas belanja belum diatur. Klik "Atur Batas" di atas.';
+      }
 
       // Recent List
-      document.getElementById('recentList').innerHTML = state.transactions.slice(0, 5).map(t => txCardHTML(t)).join('');
+      document.getElementById('recentList').innerHTML = state.transactions.length
+        ? state.transactions.slice(0, 5).map(t => txCardHTML(t)).join('')
+        : `<div class="bg-white p-5 rounded-2xl border border-dashed border-slate-300 text-center text-sm text-slate-500 font-semibold">
+            Belum ada catatan keuangan.<br/>Mulai catat lewat tombol di atas!
+           </div>`;
 
       // Wallet List
       document.getElementById('walletList').innerHTML = state.wallets.map(w => `
@@ -688,7 +721,7 @@
             <span class="text-2xl">${w.icon}</span>
             <div>
               <p class="font-extrabold text-slate-800">${w.name}</p>
-              <p class="text-sm font-bold text-emerald-700">${rp(w.balance)}</p>
+              <p class="text-sm font-bold ${w.balance < 0 ? 'text-rose-600' : 'text-emerald-700'}">${rp(w.balance)}</p>
             </div>
           </div>
           <button onclick="ubahSaldoWallet('${w.id}')" class="text-xs font-bold bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-xl text-slate-700">Ubah Saldo</button>
@@ -732,11 +765,14 @@
       document.getElementById('repKeluar').textContent = rp(keluar);
 
       const selisih = masuk - keluar;
-      document.getElementById('repInsight').textContent = selisih >= 0
-        ? `👍 Hebat! Di bulan ini masih ada sisa tabungan sebesar ${rp(selisih)}.`
-        : `⚠️ Pengeluaran lebih besar ${rp(Math.abs(selisih))} dari pemasukan bulan ini.`;
+      if (masuk === 0 && keluar === 0) {
+        document.getElementById('repInsight').textContent = '📝 Belum ada catatan pemasukan atau pengeluaran di bulan ini.';
+      } else if (selisih >= 0) {
+        document.getElementById('repInsight').textContent = `👍 Bagus! Di bulan ini masih ada sisa tabungan sebesar ${rp(selisih)}.`;
+      } else {
+        document.getElementById('repInsight').textContent = `⚠️ Pengeluaran lebih besar ${rp(Math.abs(selisih))} dari pemasukan bulan ini.`;
+      }
 
-      // Kategori breakdown
       const byCat = {};
       list.filter(t => t.type === 'keluar').forEach(t => { byCat[t.category] = (byCat[t.category] || 0) + t.amount; });
       const entries = Object.entries(byCat).sort((a, b) => b[1] - a[1]);
@@ -754,7 +790,9 @@
         `;
       }).join('') : '<p class="text-sm text-slate-500">Belum ada pengeluaran di bulan ini.</p>';
 
-      document.getElementById('monthTxList').innerHTML = list.length ? list.map(t => txCardHTML(t)).join('') : '<p class="text-sm text-slate-500">Belum ada catatan.</p>';
+      document.getElementById('monthTxList').innerHTML = list.length
+        ? list.map(t => txCardHTML(t)).join('')
+        : '<p class="text-sm text-slate-500">Belum ada catatan di bulan ini.</p>';
     }
 
     function selectReportMonth(m) {
@@ -770,6 +808,20 @@
     }
 
     function renderDonutChart() {
+      const totalPositif = state.wallets.reduce((s, w) => s + Math.max(0, w.balance), 0);
+      const emptyEl = document.getElementById('donutEmpty');
+      const wrapEl = document.getElementById('donutWrap');
+
+      if (totalPositif <= 0) {
+        emptyEl.classList.remove('hidden');
+        wrapEl.classList.add('hidden');
+        if (donutChart) { donutChart.destroy(); donutChart = null; }
+        return;
+      }
+
+      emptyEl.classList.add('hidden');
+      wrapEl.classList.remove('hidden');
+
       const ctx = document.getElementById('assetDonutChart');
       if (donutChart) donutChart.destroy();
       donutChart = new Chart(ctx, {
@@ -792,8 +844,8 @@
       const dataMasuk = MONTHS.map(m => state.transactions.filter(t => t.month === m && t.type === 'masuk').reduce((s, t) => s + t.amount, 0));
       const dataKeluar = MONTHS.map(m => state.transactions.filter(t => t.month === m && t.type === 'keluar').reduce((s, t) => s + t.amount, 0));
 
-      let running = 6000000;
-      const dataAset = MONTHS.map((_, i) => { running += (dataMasuk[i] - dataKeluar[i]); return running; });
+      let running = 0;
+      const dataBersih = MONTHS.map((_, i) => { running += (dataMasuk[i] - dataKeluar[i]); return running; });
 
       historyChart = new Chart(ctx, {
         type: chartMode,
@@ -805,7 +857,7 @@
           ]
         } : {
           labels,
-          datasets: [{ label: 'Total Aset', data: dataAset, borderColor: '#059669', backgroundColor: 'rgba(5,150,105,0.15)', fill: true, tension: 0.35 }]
+          datasets: [{ label: 'Akumulasi Bersih', data: dataBersih, borderColor: '#059669', backgroundColor: 'rgba(5,150,105,0.15)', fill: true, tension: 0.35 }]
         },
         options: {
           responsive: true,
