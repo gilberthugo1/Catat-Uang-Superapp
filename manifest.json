@@ -1,0 +1,15 @@
+{
+  "name": "CatatUang - Catatan Keuangan Mudah",
+  "short_name": "CatatUang",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#059669",
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
